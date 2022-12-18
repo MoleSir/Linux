@@ -33,6 +33,8 @@ static void time_init(void) {
 
 主要就是使用 CMOS_READ，与 BCD_TO_BIN；
 
+
+
 ## 1. `CMOS_READ`
 
 先看 CMOS_READ：
@@ -87,6 +89,8 @@ do {
 ````
 
 就是不断获取这个芯片的数据，去配置系统时间，而 CMOS 如何实现获取时间的功能，这又是硬件厂商需要解决的问题，与操作系统无关；
+
+
 
 ## 2. `BCD_TO_BIN`
 

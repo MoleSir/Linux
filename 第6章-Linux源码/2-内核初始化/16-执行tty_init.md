@@ -37,6 +37,8 @@ void tty_init(void)
 }
 ````
 
+
+
 ## 1. 执行 `rs_init`
 
 打开 `rs_init()`：
@@ -53,6 +55,8 @@ void rs_init(void)
 ````
 
 这个方法是串口中断的开启，以及设置对应的中断处理程序，串口在现在的 PC 机上已经很少用到，就不展开；
+
+
 
 ## 2. 执行 `con_init`
 
@@ -106,7 +110,7 @@ void con_init(void) {
 >
 > 输出：
 >
-> ![640 (6)](16-执行tty_init.assets/640 (6).png)
+> ![640 (6)](./pics/16-执行tty_init.assets/640 (6).png)
 
 将代码只留下一个分支：
 

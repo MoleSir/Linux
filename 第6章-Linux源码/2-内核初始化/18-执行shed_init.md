@@ -33,15 +33,17 @@ void sched_init(void) {
 }
 ```
 
+
+
 ## 1. 初始化 TTS 与 LDT
 
 首先两行代码初始化了 **TSS** 与 **LDT**，之前创建全局描述表时就预留了空间给它们
 
-![640](18-执行shed_init.assets/640-16607153757711.png)
+<img src="./pics/18-执行shed_init.assets/640-16607153757711.png" alt="640" style="zoom:67%;" />
 
 这两行代码就是往 gdt 后再加两个表项： **TSS**  与 **LDT**（放进入的也是指针，指向两个数据结构）
 
-![640 (1)](18-执行shed_init.assets/640 (1)-16607154412632.png)
+<img src="./pics/18-执行shed_init.assets/640 (1)-16607154412632.png" alt="640 (1)" style="zoom:67%;" />
 
 - **TSS**：任务状态段，保存和恢复进程的上下文，保存进程的各个寄存器信息，这样切换进程时，才可以保存和恢复上下文，继续执行，每个进程都需要拥有一个独立的 tss_struct 结构体：
 
@@ -78,7 +80,9 @@ void sched_init(void) {
 
     之后有多个用户进程时，gdt 会变成这样：
 
-    ![640 (2)](18-执行shed_init.assets/640 (2).png)
+    <img src="./pics/18-执行shed_init.assets/640 (2).png" alt="640 (2)" style="zoom:67%;" />
+
+
 
 ## 2. 赋值 `tsak` 与 `gdt` 
 
@@ -115,7 +119,7 @@ void sched_init(void) {
 
 将数组 `task` 的 0 - 63 赋值为 NULL；
 
-![640 (3)](18-执行shed_init.assets/640 (3).png)
+<img src="./pics/18-执行shed_init.assets/640 (3).png" alt="640 (3)" style="zoom:67%;" />
 
 `task_struct` 结构体就代表一个进程的信息：
 
@@ -156,13 +160,15 @@ struct task_struct {
 
 给 gdt 的剩下的位置填充上 0，即把剩下留给其他进程的 TSS 和 LDT 都先附上空值：
 
-![640 (5)](18-执行shed_init.assets/640 (5).png)
+<img src="./pics/18-执行shed_init.assets/640 (5).png" alt="640 (5)" style="zoom:70%;" />
 
 之后每创建一个进程，就会在后面添加一组 TSS 和 LDT 表示这个进程的任务状态段和局部描述符信息；就像之前的图片展示的：
 
-![640 (2)](18-执行shed_init.assets/640 (2).png)
+<img src="./pics/18-执行shed_init.assets/640 (2).png" alt="640 (2)" style="zoom:70%;" />
 
 现在已经加入了一组 TSS 和 LDT，那是因为现在正在执行的 main 函数，在进程调度机制创建完成后，就会称为 0 号进程，这里的 TSS 和 LDT 就是给  0 号进程使用的；
+
+
 
 ## 3. 记录 `TSS` 与 `LDT` 位置
 
@@ -192,9 +198,11 @@ void sched_init(void) {
 
 执行完毕后：
 
-![640 (6)](18-执行shed_init.assets/640 (6).png)
+<img src="./pics/18-执行shed_init.assets/640 (6).png" alt="640 (6)" style="zoom:67%;" />
 
 这样,CPU 之后就可以通过 tr 寄存器找到当前进程的任务状态段信息（上下文信息），通过 ldt 寄存器找到当前进程在用的局部描述符信息；
+
+
 
 ## 4. 开启计数器
 

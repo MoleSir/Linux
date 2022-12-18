@@ -24,15 +24,19 @@ void main(void) {
 }
 ````
 
+
+
 ## 1. 传递参数
 
 这个函数是需要参数的，就是之前计算得到的 `buffer_memory_end`：
 
-<img src="19-执行buffer_init.assets/640 (7).png" alt="640 (7)" style="zoom:50%;" />
+<img src="./pics/19-执行buffer_init.assets/640 (7).png" alt="640 (7)" style="zoom:50%;" />
 
 在 `mem_init` 中还设置了 `mem_map` 来管理内存：
 
-![640 (8)](19-执行buffer_init.assets/640 (8).png)
+<img src="./pics/19-执行buffer_init.assets/640 (8).png" alt="640 (8)" style="zoom:67%;" />
+
+
 
 ## 2. 初始化缓冲区
 
@@ -74,7 +78,7 @@ void buffer_init(long buffer_end) {
 
 这个变量不是由操作系统写入的，而是链接器 ld 在连接整个程序时设置的一个外部变量，计算出整个内核代码的末尾地址，那里就时缓冲区的起始位置；
 
-<img src="19-执行buffer_init.assets/640 (9).png" alt="640 (9)" style="zoom:80%;" />
+<img src="./pics/19-执行buffer_init.assets/640 (9).png" alt="640 (9)" style="zoom: 67%;" />
 
 ### 组织缓冲区内存布局为链表
 
@@ -103,7 +107,7 @@ void buffer_init(long buffer_end) {
 
 之后的循环就是从缓冲区的结尾 b 开始，每次减去 1024，而缓冲区起始地址开始，每次增加一个 `buffer_head` 大小，直到二者相遇；
 
-![640 (10)](19-执行buffer_init.assets/640 (10).png)
+<img src="./pics/19-执行buffer_init.assets/640 (10).png" alt="640 (10)" style="zoom:67%;" />
 
 并且在每次循环中设置各种 `buffer_head` 结构体的值，特别是这三个：
 
@@ -113,7 +117,7 @@ void buffer_init(long buffer_end) {
 
 最后形成这样的结构：
 
-![640 (13)](19-执行buffer_init.assets/640 (13).png)
+<img src="./pics/19-执行buffer_init.assets/640 (13).png" alt="640 (13)" style="zoom:67%;" />
 
 构成了类似链表的数据结构；
 
@@ -139,7 +143,7 @@ void buffer_init(long buffer_end) {
 
 最后形成缓存头组成的双向循环链表，并且每个缓存头指向一个缓冲块：
 
-![640 (14)](19-执行buffer_init.assets/640 (14).png)
+<img src="./pics/19-执行buffer_init.assets/640 (14).png" alt="640 (14)" style="zoom:80%;" />
 
 现在使用 firee_list 就可以遍历所有的缓存头，找到所有的缓冲块了；
 

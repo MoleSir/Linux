@@ -24,13 +24,11 @@ setup_paging:
 
 执行完毕后，内存栈应该是：
 
-![640](10-准备进入main函数.assets/640.png)
+![640](./pics/10-准备进入main函数.assets/640.png)
 
 完成五个压栈动作后，我们可以看到 setup_paging 的最后应该指令是 ret，返回指令令 CPU 指向当前栈顶位置去指向程序，而当前的栈顶恰好是 main 函数的入口地址；
 
 现在程序终于正式进入 main 函数；
-
----
 
 
 
@@ -38,7 +36,7 @@ setup_paging:
 
 在进入 main 函数之前，需要完成这些步骤：
 
-![640 (1)](10-准备进入main函数.assets/640 (1).png)
+<img src="./pics/10-准备进入main函数.assets/640 (1).png" alt="640 (1)" style="zoom:80%;" />
 
 1. 开机；
 2. BIOS 将启动代码 bootsect 加载到内存；
@@ -61,5 +59,5 @@ setup_paging:
 
 得到了内存布局为：
 
-![640 (2)](10-准备进入main函数.assets/640 (2).png)
+<img src="./pics/10-准备进入main函数.assets/640 (2).png" alt="640 (2)" style="zoom:80%;" />
 

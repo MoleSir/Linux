@@ -20,7 +20,7 @@ _sys_fork:
 - `_find_empty_process`：找到空闲的进程槽位；
 - `_copy_process`：复制进程；
 
----
+
 
 
 
@@ -56,7 +56,7 @@ int find_empty_process(void) {
 
 现在系统只有 0 号进程，所以返回得到的结构就是 1，表示 task 数组的 1 号索引；
 
----
+
 
 ## 执行 `_copy_process`
 
@@ -160,7 +160,7 @@ int copy_process(int nr, ...) {
 
 `get_free_page` 函数向主存申请空闲页面，
 
-![640 (13)](27-fork中进程基本信息的复制.assets/640 (13).png)
+<img src="./pics/27-fork中进程基本信息的复制.assets/640 (13).png" alt="640 (13)" style="zoom: 67%;" />
 
 **遍历 mem_map[] 数组，找出值为零的项，就表示找到了空闲的一页内存**。然后把该项置为 1，表示该页已经被使用。最后，算出这个页的内存起始地址，返回；
 
@@ -186,7 +186,7 @@ task[nr] = p;
 
 得到了这样的布局：
 
-![640 (14)](27-fork中进程基本信息的复制.assets/640 (14).png)
+<img src="./pics/27-fork中进程基本信息的复制.assets/640 (14).png" alt="640 (14)" style="zoom:67%;" />
 
 task 数组的 0 1 号元素指向不同的地址，但内容完全相同；
 
@@ -219,11 +219,9 @@ int copy_process(int nr, ...) {
 
 根据代码得知，其含义是将代码在内核态时使用的堆栈栈顶指针指向进程 task_struct 所在的 4K 内存页的最顶端，而且之后的每个进程都是这样被设置的：
 
-![640 (15)](27-fork中进程基本信息的复制.assets/640 (15).png)
+<img src="./pics/27-fork中进程基本信息的复制.assets/640 (15).png" alt="640 (15)" style="zoom:67%;" />
 
 一个进程拥有两个栈顶指针：用户栈栈顶 esp 与内核栈栈顶 esp0；
 
 用户程序在用户栈执行，当中断发送，进入内核态，程序在内核栈中执行；
-
----
 

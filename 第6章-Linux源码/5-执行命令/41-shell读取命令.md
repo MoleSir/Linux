@@ -30,6 +30,8 @@ int main(void) {
 }
 ````
 
+
+
 ## 1. 执行 `getcmd` 
 
 shell 使用一个 `while` 循环来不断读取着用户的命令：
@@ -59,6 +61,8 @@ char* gets(char *buf, int max) {
 ````
 
 根据源码，`getcmd` 函数通过 `gets` 最后调用系统调用 `read` 函数一个一个字符读取，直到遇到 `\r` 或者 `\n` 后返回，获得用户输入的一条命令；
+
+
 
 ## 2. `read` 读取字符
 
@@ -297,6 +301,8 @@ void wake_up(struct task_struct **p) {
 
 关于进程的阻塞还唤醒还有一些细节，下次再说；
 
+
+
 ## 3. 执行命令
 
 得到了命令后，执行：
@@ -309,7 +315,7 @@ runcmd(parsecmd(buf));
 
 # 总结
 
-![640 (3)](41-shell读取命令.assets/640 (3)-16616783939041.png)
+<img src="./pics/41-shell读取命令.assets/640 (3)-16616783939041.png" alt="640 (3)" style="zoom:67%;" />
 
 一个 shell 程序，会不断读取用户的输入，遇到 `\n` 或者 `\r` 就将其视为一句指令调用 `runcmd` 执行；
 

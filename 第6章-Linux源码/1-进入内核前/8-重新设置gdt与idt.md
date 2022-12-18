@@ -33,8 +33,6 @@
 
 0 位置处存储着操作系统全部核心代码，是由 head.s 和 main.c 以及后面的无数源代码文件编译并链接在一起而成的 system 模块；
 
----
-
 首先来执行 system 中的 head.s，为进入 c 语言做准备：
 
 ````assembly
@@ -144,15 +142,11 @@ _gdt:
 
 最后还留了 252 项的空间，这些空间后面会用来放置**任务状态段描述符 TSS** 和**局部描述符 LDT**；
 
-![640 (3)](8-重新设置gdt与idt.assets/640 (3).png)
-
----
+<img src="./pics/8-重新设置gdt与idt.assets/640 (3).png" alt="640 (3)" style="zoom:80%;" />
 
 为什么要重新设置一次 gdt 与 idt 呢，那是因为原来我们在 setup 中执行，两个表都保存在 setup 中。现在 setup 执行完毕，其内存之后就会被使用，而现在进入了 system，就需要把表搬过来；
 
-![640 (4)](8-重新设置gdt与idt.assets/640 (4).png)
-
----
+<img src="./pics/8-重新设置gdt与idt.assets/640 (4).png" alt="640 (4)" style="zoom:80%;" />
 
 之后我们会先开启分页机制，最后进入 main：
 

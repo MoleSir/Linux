@@ -49,6 +49,8 @@ int fork(void) {
 }
 ````
 
+
+
 ## 执行 `int 80`
 
 关键指令是执行了 `int 80h` 这个触发中断指令，CPU 到中断向量表找到 0x80 号中断处理函数 `system_call`：
@@ -124,7 +126,7 @@ _sys_fork:
 
 综上，可以看出，调用任何一个系统调用其实就是先把这个系统调用在 `_sys_call_table` 中的索引放入 eax 寄存器，然后调用 `int 0x80`；
 
-![640 (12)](26-通过fork看系统调用.assets/640 (12).png)
+<img src="./pics/26-通过fork看系统调用.assets/640 (12).png" alt="640 (12)" style="zoom:80%;" />
 
 -  `fork` 函数主要就是将 eax 设置为 2，再调用 `int 0x80`；
 - 系统进入 0x80 中断对应的中断处理程序 `system_call`；
@@ -299,8 +301,6 @@ int do_execve(
     ...
 }
 ````
-
----
 
 
 

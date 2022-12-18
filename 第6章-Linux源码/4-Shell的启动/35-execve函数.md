@@ -13,6 +13,8 @@ void init(void) {
 }
 ````
 
+
+
 # 执行 `execve` 函数
 
 其中有调用到一个 `execve` 函数：
@@ -97,6 +99,8 @@ int do_execve(...) {
 
 其中最核心的逻辑是：加载文件、调整内存、开始执行；下面就三个核心逻辑分许：
 
+
+
 ## 1. 读取开头的 1KB 的数据
 
 根据文件名称，找到并且读取文件的内容：
@@ -115,9 +119,11 @@ int do_execve(...) {
 
 只读取了文件的第一块数据（1KB），已经说过，0 - 6 是直接映射，那么`inode->i_zone[0]`  就是文件开头 1KB 的数据；
 
-![640 (10)](35-execve函数.assets/640 (10).png)
+<img src="./pics/35-execve函数.assets/640 (10).png" alt="640 (10)" style="zoom:67%;" />
 
 现在，内存中已经获取了这 1KB 的数据；
+
+
 
 ## 2. 解析 1KB 的数据为 exec 结构
 
@@ -157,6 +163,8 @@ struct exec {
 
 上面的代码就是 exec 结构体，这是 **a.out** 格式文件的头部结构，现在的 Linux 已经弃用了这种古老的格式，改用 ELF 格式了，但大体的思想是一致的，就是说按照这个结构体的约定，把执行文件的信息放置好；
 
+
+
 ## 3. 判断是脚本文件还是可执行文件
 
 编写 Linux 脚本文件时，通常会在开头看到这样的内容：
@@ -185,6 +193,8 @@ int do_execve(...) {
 而现在执行的 /bin/sh 是一个可执行二进制文件，非脚本文件，不满足这个条件，所以程序流到可执行文件的执行逻辑；
 
 注意将 `bh` 被释放，因为已经把这个缓冲块内容解析成 exec 结构保存到内存中了；
+
+
 
 ## 4. 准备参数空间
 
@@ -231,11 +241,11 @@ p = PAGE_SIZE * MAX_ARG_PAGES - 4 = 128K - 4;
 
 创建 1 号进程时就知道，操作系统将每个进程的线性地址空间分配到单独的 64M 空间中，此时系统中存在三个进程：
 
- ![640 (11)](35-execve函数.assets/640 (11).png)
+ <img src="./pics/35-execve函数.assets/640 (11).png" alt="640 (11)" style="zoom: 50%;" />
 
 而参数表为 128K，表示每个进程的线性地址空间的尾端 128K，是为参数表保留的，目前这个 p 就指向参数表的开始处（偏移 4 字节）
 
-![640](35-execve函数.assets/640.png)
+<img src="./pics/35-execve函数.assets/640.png" alt="640" style="zoom: 50%;" />
 
 ### 拷贝字符串参数
 
@@ -257,9 +267,11 @@ int do_execve(...) {
 
 比如，`envp` 表示字符串参数 `"HOME=/"`，`argv` 表示字符串参数 `"/bin/sh"`，两个 copy 就表示把这个字符串参数往参数表里存，相应地指针 p 也往下移动（共移动了 7 + 8 = 15 个字节），和压栈的效果是一样的：
 
-![640 (1)](35-execve函数.assets/640 (1).png)
+<img src="./pics/35-execve函数.assets/640 (1).png" alt="640 (1)" style="zoom:50%;" />
 
 现在字符串被安排在参数表内存，并且之间用 NULL 分隔；
+
+
 
 ## 5. 更新局部描述符 LDT
 
@@ -282,7 +294,9 @@ ex 结构里的 a_text 是生成 /bin/sh 这个 a.out 格式的文件时，写�
 
 由于这个函数返回值是数据段限长，也就是 64M，所以最终的 p 值被调整为了以每个进程的线性地址空间视角下的地址偏移：
 
-![640 (2)](35-execve函数.assets/640 (2).png)
+<img src="./pics/35-execve函数.assets/640 (2).png" alt="640 (2)" style="zoom: 50%;" />
+
+
 
 ## 6. 构造参数表
 
@@ -337,7 +351,7 @@ static unsigned long * create_tables(char * p,int argc,int envc) {
 
 最后的结果：
 
-![640 (3)](35-execve函数.assets/640 (3).png)
+<img src="./pics/35-execve函数.assets/640 (3).png" alt="640 (3)" style="zoom:50%;" />
 
 最后将 sp 返回给 p，这样 p 成为了新的栈顶指针，给即将完成替换的 /bin/sh 程序：
 
@@ -349,6 +363,8 @@ int do_execve(...) {
     eip[3] = p;
 }
 ````
+
+
 
 ## 7. 设置 eip 和 esp
 
@@ -370,14 +386,14 @@ int do_execve(unsigned long * eip, ...) {
 
 第二行重新设置了栈指针 esp 的值，指向了之前计算得到的 p，作为栈顶；
 
-![640 (3)](35-execve函数.assets/640 (3).png)
+<img src="./pics/35-execve函数.assets/640 (3).png" alt="640 (3)" style="zoom:67%;" />
 
 那么，现在程序已经具备了执行的条件；
 
 至于为什么往 eip 的 0 和 3 索引位置处写入数据，就可以达到替换 eip 和 esp 的目的；
 
 `execve` 是一个系统调用，也是一个中断，那么执行中断之前 CPU 会给栈空间里压入一定的信息：
-![640 (4)](35-execve函数.assets/640 (4).png)
+<img src="./pics/35-execve函数.assets/640 (4).png" alt="640 (4)" style="zoom:67%;" />
 
 然后，进入中断以后，通过系统调用查表进入到 **_sys_execve** 这里：
 
@@ -393,7 +409,7 @@ _sys_execve:
 
 在真正调用 `do_execve` 函数时，`_sys_execve` 这段代码偷偷地插入了一个小步骤，就是把当前栈顶指针 esp 偏移到 EIP 处的地址值给当做第一个参数 `unsigned long  eip` 传入进来；
 
-![640 (5)](35-execve函数.assets/640 (5).png)
+<img src="./pics/35-execve函数.assets/640 (5).png" alt="640 (5)" style="zoom:67%;" />
 
 中断返回后，会把 eip 与 esp 的值读回 CPU，进入一个新的程序执行；
 
